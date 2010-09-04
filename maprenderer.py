@@ -1,6 +1,7 @@
 #!usr/bin/python
 import urllib
 import math
+#import antigravity
 import sys
 from PIL import Image
 
@@ -11,6 +12,7 @@ bottomrighty = 0
 minwidth  = 0
 minheight = 0
 zoom = 0
+outfile = "karte"
 
 def deg2num(lat_deg, lon_deg, zoom):
     lat_rad = math.radians(lat_deg)
@@ -27,6 +29,7 @@ def parseargs():
     global bottomrighty
     global minwidth
     global minheight
+    global outfile
     for arg in sys.argv:
         print arg
         if arg=="-min":
@@ -39,6 +42,11 @@ def parseargs():
             state=""
         elif arg == "-rect":
             state="RECT0"
+        elif arg == "-o":
+            state = "OUT"
+        elif state == "OUT":
+            outfile = arg
+            state = ""
         elif state == "RECT0":
             topleftx=float(arg)
             state= "RECT1"
@@ -87,8 +95,8 @@ height = abs((topleft[1]-bottomright[1])*256)
 print "Resulting Map will be "+repr(width)+"x"+repr(height)+"px"
 image = Image.new("RGB", (width,height), "white")
 
-print topleft[0], bottomright[0]
-print  topleft[1],bottomright[1]
+#print topleft[0], bottomright[0]
+#print  topleft[1],bottomright[1]
 steps = (bottomright[0]-topleft[0])*(bottomright[1]-topleft[1])
 ysteps = (bottomright[1]-topleft[1])
 for x in range(topleft[0], bottomright[0]):
@@ -98,5 +106,5 @@ for x in range(topleft[0], bottomright[0]):
         print int((ysteps*xcount+ycount)/float(steps)*100),"% complete"
     ycount = 0
     xcount+=1
-image.save("karte.png", "PNG")
+image.save(outfile+".png", "PNG")
     
